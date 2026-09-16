@@ -100,7 +100,7 @@ object Utils {
         return ""
         /*try {
             // this is so Linux hack
-            return loadFileAsString("/sys/class/net/" +interfaceName + "/address").toUpperCase().trim();
+            return loadFileAsString("/sys/class/net/" +interfaceName + "/address").uppercase().trim();
         } catch (IOException ex) {
             return null;
         }*/

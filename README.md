@@ -1,62 +1,92 @@
 # Offline Chat
-#### With the Android P2P tool, devices connected to the same network create a user server, that is, client users connected to the chat room can see all chat rooms, then connect and start the chat 🏗
 
-### Release
-https://github.com/ferhatozcelik/Offline-Chat/releases/download/Release-1.0.0/app-release.apk
+A peer-to-peer chat app that works **without the internet**. Devices on the same local
+network discover each other with Android's Network Service Discovery (NSD/mDNS), then
+one device hosts a chat room over a raw TCP socket while the others join it. Recent
+rooms are remembered locally with Room, so you can find them again quickly.
 
-### Tasks
-- [ ] Introduction screen: Opening a hotspot, creating a chat and connecting to a chat https://github.com/AppIntro/AppIntro | create:👤 Ferhat OZCELIK
-- [ ] Wifi Connect Check | create:👤 Ferhat OZCELIK
-- [ ] Chat UI Edit: fragment_chat.xml, left.xml and right.xml modern UI desing | create:👤 Ferhat OZCELIK
-- [ ] Progress Bar: All progress add | create:👤 Ferhat OZCELIK
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
+## Features
 
-### Build With 🏗️
-- [Kotlin] - Programming language for Android
-- [Hilt-Dagger] - Standard library to incorporate Dagger dependency injection into an Android application.
-- [Retrofit] -  A type-safe HTTP client for Android and Java.
-- [Room] - SQLite object mapping library.
-- [Coroutines] - For asynchronous
-- [LiveData] - Data objects that notify views when the underlying database changes.
-- [ViewModel] - Stores UI-related data that isn't destroyed on UI changes.
-- [ViewBinding] - Generates a binding class for each XML layout file present in that module and allows you to more easily write code that interacts with views.
-- [Jetpack Navigation] - Navigation refers to the interactions that allow users to navigate across, into, and back out from the different pieces of content within your app
+- **No server required** — chat runs over your LAN via mDNS discovery + TCP sockets.
+- Host a room or join one from the discovered devices list.
+- Real-time message feed with a simple send/receive client and server.
+- Device list persisted locally with Room.
+- MVVM architecture with Hilt dependency injection and Jetpack Navigation.
 
-  [ViewModel]: <https://developer.android.com/topic/libraries/architecture/viewmodel>
-  [Jetpack Navigation]: <https://developer.android.com/guide/navigation/>
-  [Hilt-Dagger]: <https://dagger.dev/hilt/>
-  [DataStore]: <https://developer.android.com/topic/libraries/architecture/datastore>
-  [ViewBinding]: <https://developer.android.com/topic/libraries/view-binding>
-  [LiveData]: <https://developer.android.com/topic/libraries/architecture/livedata/>
-  [Retrofit]: <https://square.github.io/retrofit/>
-  [ViewModel]: <https://developer.android.com/topic/libraries/architecture/viewmodel>
-  [Kotlin]: <https://kotlinlang.org>
-  [Coroutines]: <https://kotlinlang.org/docs/coroutines-overview.html>
-  [MVVM (Model View View-Model)]: <https://developer.android.com/jetpack/guide#recommended-app-arch>
-  [Dictionary Api]: <https://api.dictionaryapi.dev/>
-  [Room]: <https://developer.android.com/training/data-storage/room/>
-
-### Project Architecture 🗼
-
-
-This app uses [MVVM (Model View View-Model)] architecture.
-
-### Screenshots
+## Screenshots
 
 |<img src="screenshots/screenshot_01.png" width="280" height="600">|<img src="screenshots/screenshot_02.png" width="280" height="600">|
+|:---:|:---:|
 
-### Author
-👤 Ferhat OZCELIK
+## Architecture
 
-### Developers
-👤 Ferhat OZCELIK
+```
+app/
+└── src/main/java/org/turkiye/offlinechat/
+    ├── data/
+    │   ├── entity/      # Room entities
+    │   ├── local/       # Room database, DAOs, type converters
+    │   ├── model/       # network/UI models
+    │   └── remote/      # Retrofit API (optional REST layer)
+    ├── di/              # Hilt modules (Api, App, Database)
+    ├── repository/      # UsersRepository
+    ├── ui/
+    │   ├── activitys/   # MainActivity
+    │   ├── adapters/    # RecyclerView / Array adapters
+    │   ├── dialogs/     # join dialog
+    │   └── fragments/   # main / client / server fragments + view models
+    └── util/            # constants, extensions, IP helpers
+```
 
-Github: @ferhatozcelik
-LinkedIn: https://www.linkedin.com/in/ferhatozcelik/
-Discord: ferhatozcelik#3033
-Show your support
+The app follows **MVVM**: fragments observe `LiveData` exposed by `@HiltViewModel`
+view models, which delegate to repositories backed by Room and the network layer.
 
-Give a ⭐️ if this project helped you!
+## Tech stack
 
-### License
-This project is Apache License, Version 2.0 (the "License") licensed.
+- **Kotlin** + **Coroutines / Flow**
+- **Hilt (Dagger)** for dependency injection
+- **Room** for local persistence (schema exported to `app/schemas`)
+- **Retrofit + OkHttp** for the optional REST layer
+- **Jetpack Navigation** for in-app navigation
+- **ViewBinding** for type-safe view access
+
+## Permissions
+
+The app requests WiFi/network permissions so that mDNS discovery and the local socket
+server can operate:
+
+`INTERNET`, `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`,
+`CHANGE_WIFI_MULTICAST_STATE`, `NEARBY_WIFI_DEVICES`.
+
+All devices must be on the same network.
+
+## Requirements
+
+| Tool | Version |
+| --- | --- |
+| minSdk | 24 |
+| compileSdk / targetSdk | 36 |
+| Gradle | 8.14.5 |
+| Android Gradle Plugin | 8.13.2 |
+| Kotlin | 2.2.21 |
+| JDK | 17 |
+
+## Building
+
+```bash
+./gradlew assembleDebug      # debug APK
+./gradlew assembleRelease    # release APK
+```
+
+## Author
+
+**Ferhat OZCELIK**
+
+- GitHub: [@ferhatozcelik](https://github.com/ferhatozcelik)
+- LinkedIn: [ferhatozcelik](https://www.linkedin.com/in/ferhatozcelik/)
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE). If this project helped you, give it a ⭐️.
