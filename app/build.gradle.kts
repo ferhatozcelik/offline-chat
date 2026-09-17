@@ -3,18 +3,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.kotlinParcelize)
     alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.room)
 }
 
 kapt {
     correctErrorTypes = true
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
 }
 
 android {
@@ -58,6 +52,8 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":offlinechat-core"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -75,19 +71,9 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    // Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    kapt(libs.androidx.room.compiler)
-
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-
-    // Networking
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-    implementation(libs.okhttp.logging)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

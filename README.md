@@ -22,8 +22,11 @@ rooms are remembered locally with Room, so you can find them again quickly.
 
 ## Architecture
 
+The reusable parts live in the `:offlinechat-core` library module, while `:app` is a thin
+demo application on top of it:
+
 ```
-app/
+offlinechat-core/                    # reusable library (:offlinechat-core)
 └── src/main/java/org/turkiye/offlinechat/
     ├── data/
     │   ├── entity/      # Room entities
@@ -31,13 +34,18 @@ app/
     │   ├── model/       # network/UI models
     │   └── remote/      # Retrofit API (optional REST layer)
     ├── di/              # Hilt modules (Api, App, Database)
+    ├── interfaces/      # discovery / room / click listeners
     ├── repository/      # UsersRepository
-    ├── ui/
-    │   ├── activitys/   # MainActivity
-    │   ├── adapters/    # RecyclerView / Array adapters
-    │   ├── dialogs/     # join dialog
-    │   └── fragments/   # main / client / server fragments + view models
     └── util/            # constants, extensions, IP helpers
+
+app/                                 # demo application (:app)
+└── src/main/java/org/turkiye/offlinechat/
+    ├── App.kt
+    └── ui/
+        ├── activitys/   # MainActivity
+        ├── adapters/    # RecyclerView / Array adapters
+        ├── dialogs/     # join dialog
+        └── fragments/   # main / client / server fragments + view models
 ```
 
 The app follows **MVVM**: fragments observe `LiveData` exposed by `@HiltViewModel`
@@ -47,7 +55,7 @@ view models, which delegate to repositories backed by Room and the network layer
 
 - **Kotlin** + **Coroutines / Flow**
 - **Hilt (Dagger)** for dependency injection
-- **Room** for local persistence (schema exported to `app/schemas`)
+- **Room** for local persistence (schema exported to `offlinechat-core/schemas`)
 - **Retrofit + OkHttp** for the optional REST layer
 - **Jetpack Navigation** for in-app navigation
 - **ViewBinding** for type-safe view access
@@ -78,6 +86,26 @@ All devices must be on the same network.
 ```bash
 ./gradlew assembleDebug      # debug APK
 ./gradlew assembleRelease    # release APK
+```
+
+## Library module
+
+The data, repository and dependency-injection layers are packaged as the
+`:offlinechat-core` Android library (`com.ferhatozcelik:offlinechat-core`). Publish it to
+your local Maven repository and consume it from another project:
+
+```bash
+./gradlew :offlinechat-core:publishToMavenLocal -PVERSION_NAME=1.0.0
+```
+
+```kotlin
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    implementation("com.ferhatozcelik:offlinechat-core:1.0.0")
+}
 ```
 
 ## Author

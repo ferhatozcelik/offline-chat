@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Offline Chat"
 include(":app")
+include(":offlinechat-core")
